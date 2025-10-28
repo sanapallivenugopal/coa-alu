@@ -1,0 +1,94 @@
+/* Main window styling */
+.root {
+    -fx-background-color: linear-gradient(to bottom right, #6EC5F7, #F3A6FF);
+    -fx-font-family: 'Arial';
+}
+
+/* Styling for all TitledPane headers (the titles) */
+.titled-pane > .title {
+    -fx-background-color: #2A3F54; /* Dark blue/grey */
+    -fx-text-fill: white;
+    -fx-border-color: #1A2B3C;
+    -fx-border-width: 1;
+    -fx-background-radius: 5 5 0 0;
+    -fx-border-radius: 5 5 0 0;
+    -fx-font-weight: bold;
+}
+
+/* Common style for all TitledPane content areas */
+.titled-pane .content {
+    -fx-border-color: #2A3F54;
+    -fx-border-width: 0 1 1 1;
+    -fx-background-radius: 0 0 5 5;
+    -fx-border-radius: 0 0 5 5;
+    -fx-padding: 15px;
+}
+
+/* --- Give each section a unique background --- */
+#inputsPane .content {
+    -fx-background-color: #FFFFFF; /* Plain white */
+}
+#arithmeticPane .content {
+    -fx-background-color: #E8F5E9; /* Light green */
+}
+#logicalPane .content {
+    -fx-background-color: #E3F2FD; /* Light blue */
+}
+#resultsPane .content {
+    -fx-background-color: #F3E5F5; /* Light purple */
+}
+
+
+/* Style for labels inside the panes */
+.label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+/* --- Button Colors --- */
+
+/* Base button style */
+.button {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-min-width: 120px;
+    -fx-padding: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
+}
+.button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 8, 0, 0, 3);
+}
+
+/* Arithmetic buttons - Green */
+.button-arithmetic {
+    -fx-background-color: #2ECC71; /* Emerald Green */
+}
+.button-arithmetic:hover {
+    -fx-background-color: #27AE60; /* Darker Green */
+}
+
+/* Logical buttons - Blue */
+.button-logical {
+    -fx-background-color: #3498DB; /* Peter River Blue */
+}
+.button-logical:hover {
+    -fx-background-color: #2980B9; /* Darker Blue */
+}
+
+
+/* --- Results Area --- */
+#resultsArea {
+    -fx-background-color: #ECF0F1; /* Light grey */
+    -fx-border-color: #BDC3C7;
+    -fx-border-width: 1;
+    -fx-background-radius: 3;
+    -fx-border-radius: 3;
+}
+#resultsArea .text {
+    -fx-font-family: 'Monospaced';
+    -fx-fill: #2C3E50; /* Dark text */
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
