@@ -1,0 +1,229 @@
+package coa.alu;
+
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+
+    private ALU alu = new ALU();
+    private TextField num1Field;
+    private TextField num2Field;
+    private TextArea resultsArea;
+
+    @Override
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("ALU Simulator");
+
+        // --- Main Layout ---
+        VBox root = new VBox(15);
+        root.setPadding(new Insets(20));
+        root.setAlignment(Pos.CENTER);
+
+        Text scenetitle = new Text("ALU Simulator");
+        scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 24));
+        root.getChildren().add(scenetitle);
+
+        // --- Inputs ---
+        GridPane inputsGrid = new GridPane();
+        inputsGrid.setHgap(10);
+        inputsGrid.setVgap(10);
+        inputsGrid.setAlignment(Pos.CENTER);
+
+        num1Field = new TextField("75");
+        num2Field = new TextField("30");
+        num1Field.setPromptText("Enter a number");
+        num2Field.setPromptText("Enter a number");
+
+        inputsGrid.add(new Label("Number A:"), 0, 0);
+        inputsGrid.add(num1Field, 1, 0);
+        inputsGrid.add(new Label("Number B:"), 0, 1);
+        inputsGrid.add(num2Field, 1, 1);
+
+        TitledPane inputsPane = new TitledPane("Inputs", inputsGrid);
+        inputsPane.setCollapsible(false);
+        inputsPane.setId("inputsPane"); // ID for CSS
+
+        // --- Arithmetic Operations ---
+        FlowPane arithmeticButtons = new FlowPane(10, 10);
+        arithmeticButtons.setAlignment(Pos.CENTER);
+        Button addButton = new Button("Add (A + B)");
+        Button subtractButton = new Button("Subtract (A - B)");
+        Button multiplyButton = new Button("Multiply (A * B)");
+        Button divideButton = new Button("Divide (A / B)");
+
+        // Add style class for arithmetic buttons
+        addButton.getStyleClass().add("button-arithmetic");
+        subtractButton.getStyleClass().add("button-arithmetic");
+        multiplyButton.getStyleClass().add("button-arithmetic");
+        divideButton.getStyleClass().add("button-arithmetic");
+
+        arithmeticButtons.getChildren().addAll(addButton, subtractButton, multiplyButton, divideButton);
+
+        TitledPane arithmeticPane = new TitledPane("Arithmetic Operations", arithmeticButtons);
+        arithmeticPane.setCollapsible(false);
+        arithmeticPane.setId("arithmeticPane"); // ID for CSS
+
+        // --- Logical Operations ---
+        FlowPane logicalButtons = new FlowPane(10, 10);
+        logicalButtons.setAlignment(Pos.CENTER);
+        Button andButton = new Button("AND (A & B)");
+        Button orButton = new Button("OR (A | B)");
+        Button xorButton = new Button("XOR (A ^ B)");
+        Button notButton = new Button("NOT (~A)");
+
+        // Add style class for logical buttons
+        andButton.getStyleClass().add("button-logical");
+        orButton.getStyleClass().add("button-logical");
+        xorButton.getStyleClass().add("button-logical");
+        notButton.getStyleClass().add("button-logical");
+
+        logicalButtons.getChildren().addAll(andButton, orButton, xorButton, notButton);
+
+        TitledPane logicalPane = new TitledPane("Logical Operations", logicalButtons);
+        logicalPane.setCollapsible(false);
+        logicalPane.setId("logicalPane"); // ID for CSS
+
+        // --- Results ---
+        resultsArea = new TextArea();
+        resultsArea.setEditable(false);
+        resultsArea.setId("resultsArea"); // ID for CSS styling
+        VBox resultsBox = new VBox(10, new Label("Results:"), resultsArea);
+        resultsBox.setPadding(new Insets(10));
+
+        TitledPane resultsPane = new TitledPane("Results", resultsBox);
+        resultsPane.setCollapsible(false);
+        resultsPane.setId("resultsPane"); // ID for CSS
+
+        // --- Add all panes to root ---
+        root.getChildren().addAll(inputsPane, arithmeticPane, logicalPane, resultsPane);
+
+        // --- Event Handlers ---
+        addButton.setOnAction(e -> calculate("add", false));
+        subtractButton.setOnAction(e -> calculate("subtract", false));
+        multiplyButton.setOnAction(e -> calculate("multiply", false));
+        divideButton.setOnAction(e -> calculate("divide", false));
+
+        andButton.setOnAction(e -> calculate("and", false));
+        orButton.setOnAction(e -> calculate("or", false));
+        xorButton.setOnAction(e -> calculate("xor", false));
+        notButton.setOnAction(e -> calculate("not", true)); // 'not' is a unary operation
+
+        // --- Scene Setup ---
+        Scene scene = new Scene(root, 600, 700);
+
+        // Load the CSS file
+        try {
+            // ----- THIS IS THE CORRECTED LINE -----
+            scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        } catch (Exception e) {
+            System.out.println("Could not find style.css. Using default styles.");
+        }
+
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    /**
+     * Performs the calculation and updates the results area.
+     * @param operation The operation to perform (e.g., "add", "not")
+     * @param isUnary True if the operation only uses Number A
+     */
+    private void calculate(String operation, boolean isUnary) {
+        try {
+            int num1 = Integer.parseInt(num1Field.getText());
+            boolean[] binaryA = ALU.intToBinary(num1);
+
+            int num2 = 0;
+            boolean[] binaryB = null;
+
+            if (!isUnary) {
+                num2 = Integer.parseInt(num2Field.getText());
+                binaryB = ALU.intToBinary(num2);
+            }
+
+            boolean[] resultBinary;
+            String opSymbol = "";
+
+            switch (operation) {
+                case "add":
+                    resultBinary = alu.add(binaryA, binaryB);
+                    opSymbol = "+";
+                    break;
+                case "subtract":
+                    resultBinary = alu.subtract(binaryA, binaryB);
+                    opSymbol = "-";
+                    break;
+                case "multiply":
+                    resultBinary = alu.multiply(binaryA, binaryB);
+                    opSymbol = "*";
+                    break;
+                case "divide":
+                    resultBinary = alu.divide(binaryA, binaryB); // This can throw ArithmeticException
+                    opSymbol = "/";
+                    break;
+                case "and":
+                    resultBinary = alu.and(binaryA, binaryB);
+                    opSymbol = "&";
+                    break;
+                case "or":
+                    resultBinary = alu.or(binaryA, binaryB);
+                    opSymbol = "|";
+                    break;
+                case "xor":
+                    resultBinary = alu.xor(binaryA, binaryB);
+                    opSymbol = "^";
+                    break;
+                case "not":
+                    resultBinary = alu.not(binaryA);
+                    opSymbol = "~";
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown operation");
+            }
+
+            int resultDecimal = ALU.binaryToInt(resultBinary);
+
+            // Build the output string
+            StringBuilder sb = new StringBuilder();
+            sb.append(String.format("Operation        : %s\n", operation.toUpperCase()));
+            sb.append("--------------------------------\n");
+            sb.append(String.format("Input A (Decimal): %d\n", num1));
+            sb.append(String.format("Input A (Binary) : %s\n\n", ALU.binaryToString(binaryA)));
+
+            if (!isUnary) {
+                sb.append(String.format("Input B (Decimal): %d\n", num2));
+                sb.append(String.format("Input B (Binary) : %s\n\n", ALU.binaryToString(binaryB)));
+            }
+
+            sb.append("--------------------------------\n");
+            sb.append(String.format("Result (Binary)  : %s\n", ALU.binaryToString(resultBinary)));
+            sb.append(String.format("Result (Decimal) : %d\n\n", resultDecimal));
+
+            // Show check
+            if (isUnary) {
+                sb.append(String.format("Check            : %s%d = %d", opSymbol, num1, resultDecimal));
+            } else {
+                sb.append(String.format("Check            : %d %s %d = %d", num1, opSymbol, num2, resultDecimal));
+            }
+
+            resultsArea.setText(sb.toString());
+
+        } catch (NumberFormatException ex) {
+            resultsArea.setText("Error: Please enter valid integers in the input fields.");
+        } catch (ArithmeticException ex) {
+            resultsArea.setText("Error: Division by zero is not allowed.");
+        }
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
